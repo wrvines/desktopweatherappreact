@@ -9,16 +9,16 @@ function Forecast({ high, low, wind, conditions, image, time, index }) {
     <div>
       <div className="py-8 flex flex-col justify-around items-center">
         <p className="font-bold text-xl pb-2">{date}</p>
-        <p>High: {high}</p>
-        <p>Low: {low}</p>
-        <p>Wind: {wind}</p>
+        <p>High: {high}&deg; F</p>
+        <p>Low: {low}&deg; F</p>
+        <p>Wind: {wind} MPH</p>
         <div className="flex gap-2 justify-center items-center">
           <img
             className="w-[6rem] h-[6rem] md:w-[12rem] md:h-[12rem]"
             src={`http://openweathermap.org/img/wn/${image}@2x.png`}
             alt="/"
           />
-          <p className=" -rotate-[90deg] ">{conditions}</p>
+          <p className=" -rotate-[90deg] text-[1.5rem]">{conditions}</p>
         </div>
       </div>
     </div>

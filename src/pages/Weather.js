@@ -84,7 +84,7 @@ function Weather({ lat, long }) {
             <div className="p-4">
               <p>Humidity: {Math.round(currentWeather?.humidity)}%</p>
               <p>Wind: {Math.round(currentWeather?.wind_speed)} MPH</p>
-              <p>Feels Like: {Math.round(currentWeather?.feels_like)}&deg;F</p>
+              <p>Feels Like: {Math.round(currentWeather?.feels_like)}&deg; F</p>
             </div>
             <div className="p-4">
               <p className="flex">
