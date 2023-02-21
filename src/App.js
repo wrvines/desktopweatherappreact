@@ -14,17 +14,20 @@ function App() {
   const [location, setLocation] = React.useState("");
   const [lat, setLat] = React.useState("");
   const [long, setLong] = React.useState("");
+  const [city, setCity] = React.useState("");
 
   const handleLocation = (e) => {
     e.preventDefault();
     axios
       .get(`${locationBaseUrl}?text=${location}&apiKey=${geocodeApiKey}`)
       .then((res) => {
-        // console.log(res.data.features[0].properties.lat);
+        console.log(res.data.query.parsed);
         setLat(res.data.features[0].properties.lat);
         setLong(res.data.features[0].properties.lon);
+        setCity(res.data.query.parsed.city);
       })
       .catch((err) => console.log(err));
+    setLocation("");
   };
 
   return (
@@ -43,6 +46,9 @@ function App() {
           />
         </form>
       </div>
+      <h1 className="text-4xl font-bold text-center pb-4">
+        {city.toUpperCase()}
+      </h1>
       <Weather lat={lat} long={long} />
     </div>
   );

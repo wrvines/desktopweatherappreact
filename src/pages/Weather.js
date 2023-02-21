@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { FiSunrise, FiSunset } from "react-icons/fi";
+import Forecast from "../components/Forecast";
 
 function Weather({ lat, long }) {
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
@@ -16,7 +17,7 @@ function Weather({ lat, long }) {
         `${baseUrl}?lat=${lat}&lon=${long}&appid=${apiKey}&exclude=minutely,hourly,alerts&units=imperial`
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setCurrentWeather(res.data.current);
         setForecast(res.data.daily);
         setSuccess(true);
@@ -36,8 +37,18 @@ function Weather({ lat, long }) {
     hour: "numeric",
     minute: "numeric",
   };
-  // let optionTwo = { weekday: "long", day: "numeric" };
-  // let optionsThree = { hour: "numeric", minute: "numeric" };
+  // let optionTwo = {
+  //   day: "long",
+  //   month: "long",
+  //   hour: "numeric",
+  //   minute: "numeric",
+  // };
+  // let optionThree = {
+  //   day: "long",
+  //   month: "long",
+  //   hour: "numeric",
+  //   minute: "numeric",
+  // };
   let date = unixDate.toLocaleDateString("en-US", options);
   // let forecastDate = forecastUnixDate.toLocaleDateString("en-US", optionTwo);
   let sunRise = unixSunrise.toLocaleTimeString("en-US", options);
@@ -77,28 +88,24 @@ function Weather({ lat, long }) {
             </div>
             <div className="p-4">
               <p className="flex">
-                <FiSunrise />: {sunRise}
+                <FiSunrise /> : {sunRise}
               </p>
               <p className="flex">
-                <FiSunset />: {sunSet}
+                <FiSunset /> : {sunSet}
               </p>
             </div>
           </div>
           {/* forecast */}
           <div className="bg-blue-400 grid md:grid-cols-2 lg:grid-cols-4 w-full">
             {forecast?.map((daily) => (
-              <div className="py-8 shadow-xl flex flex-col justify-around items-center">
-                <p>High: {Math.round(daily?.temp?.max)}</p>
-                <p>Low: {daily?.temp?.min}</p>
-                <p>Wind: {daily?.wind_speed}</p>
-                <p>{daily?.weather[0]?.main}</p>
-                <img
-                  className="w-[8rem] h-[8] md:w-[12rem] md:h-[12rem]"
-                  src={`http://openweathermap.org/img/wn/${daily?.weather[0]?.icon}@2x.png`}
-                  alt="/"
-                />
-                {/* <p>{forecastDate}</p> */}
-              </div>
+              <Forecast
+                high={Math.round(daily?.temp?.max)}
+                low={Math.round(daily?.temp?.min)}
+                wind={Math.round(daily?.wind_speed)}
+                conditions={daily?.weather[0]?.main}
+                image={daily?.weather[0]?.icon}
+                time={daily?.dt}
+              />
             ))}
           </div>
         </div>
