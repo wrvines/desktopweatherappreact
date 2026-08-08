@@ -1,15 +1,10 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import React from "react";
-import Weather from "./pages/Weather";
 import axios from "axios";
+import Weather from "./pages/Weather";
 
 function App() {
-  const locationBaseUrl = process.env.REACT_APP_GEOCODE_BASE_URL;
-  const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
-  const baseUrl = process.env.REACT_APP_WEATHER_BASE_URL;
-  const geocodeApiKey = process.env.REACT_APP_GEOCODE_API_KEY;
-
-  //   https://api.geoapify.com/v1/geocode/search?text=casper&apiKey=e383ad4fdfc84f31a6a4ac17d6c3ab7d
+  const locationBaseUrl = import.meta.env.VITE_GEOCODE_BASE_URL;
+  const geocodeApiKey = import.meta.env.VITE_GEOCODE_API_KEY;
 
   const [location, setLocation] = React.useState("");
   const [lat, setLat] = React.useState("");
@@ -18,13 +13,13 @@ function App() {
 
   const handleLocation = (e) => {
     e.preventDefault();
+    if (!location.trim()) return;
     axios
       .get(`${locationBaseUrl}?text=${location}&apiKey=${geocodeApiKey}`)
       .then((res) => {
-        console.log(res.data.query.parsed);
         setLat(res.data.features[0].properties.lat);
         setLong(res.data.features[0].properties.lon);
-        setCity(res.data.query.parsed.city);
+        setCity(res.data.query?.parsed?.city ?? location.trim());
       })
       .catch((err) => console.log(err));
     setLocation("");
@@ -47,7 +42,7 @@ function App() {
         </form>
       </div>
       <h1 className="text-4xl font-bold text-center pb-4">
-        {city.toUpperCase()}
+        {city ? city.toUpperCase() : ""}
       </h1>
       <Weather lat={lat} long={long} />
     </div>

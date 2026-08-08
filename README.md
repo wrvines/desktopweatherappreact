@@ -1,70 +1,66 @@
-# Getting Started with Create React App
+# Weather App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Weather app built with **React 19**, **Vite 8**, **Tailwind CSS 4**, and the
+OpenWeatherMap + Geoapify APIs. Enter a city to see current conditions and a
+7-day forecast.
 
-## Available Scripts
+## Local development
 
-In the project directory, you can run:
+```bash
+npm install
+cp .env.example .env   # fill in your API keys
+npm run dev            # http://localhost:5173
+npm run build          # production build to dist/
+npm run preview        # serve the production build locally
+```
 
-### `npm start`
+## Project structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+src/
+  pages/Weather.jsx    current conditions + forecast grid
+  components/Forecast.jsx
+  App.jsx              city search / geocoding
+  index.css            Tailwind entry
+public/                favicon, manifest, robots.txt
+.env.example           env template (API keys — never commit the real .env)
+nginx.conf             nginx config (HTTPS redirect, gzip, caching)
+docker-compose.yml     web + certbot services
+deploy.sh              deploy/renew helpers
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Deploying to the home server
 
-### `npm test`
+Prerequisites on the server:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Docker + Docker Compose v2
+- Ports 80 and 443 forwarded on your router to the server
+- DNS A records for your domain → your home IP
+- `.env` with real API keys (`deploy.sh up` copies the example if missing)
 
-### `npm run build`
+Then, from this directory on the server:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+./deploy.sh up     # builds, starts, and gets a real SSL cert
+./deploy.sh renew  # renews the cert (run monthly)
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Automatic renewal
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Add a monthly cron job on the server (or a systemd timer):
 
-### `npm run eject`
+```
+0 3 1 * * cd /path/to/desktopweatherappreact && ./deploy.sh renew >> /var/log/weather-app-renew.log 2>&1
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Security note
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The API keys previously committed to this repo are compromised and were
+removed from tracking. **Regenerate them** in the OpenWeatherMap and Geoapify
+dashboards, then update your local `.env` before deploying.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Notes
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Only one site can serve ports 80/443 at a time. If you host the portfolio on
+  the root domain, run this app on a subdomain (edit `DOMAIN` in `deploy.sh`
+  and the `server_name`/cert paths in `nginx.conf`).

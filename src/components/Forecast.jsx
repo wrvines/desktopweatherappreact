@@ -1,6 +1,6 @@
 import React from "react";
 
-function Forecast({ high, low, wind, conditions, image, time, index }) {
+function Forecast({ high, low, wind, conditions, image, time }) {
   const unixDate = new Date(time * 1000);
   let options = { weekday: "long", day: "numeric", month: "long" };
   let date = unixDate.toLocaleDateString("en-US", options);
@@ -15,8 +15,8 @@ function Forecast({ high, low, wind, conditions, image, time, index }) {
         <div className="flex gap-2 justify-center items-center">
           <img
             className="w-[6rem] h-[6rem] md:w-[12rem] md:h-[12rem]"
-            src={`http://openweathermap.org/img/wn/${image}@2x.png`}
-            alt="/"
+            src={`https://openweathermap.org/img/wn/${image}@2x.png`}
+            alt={conditions}
           />
           <p className=" -rotate-[90deg] text-[1.5rem]">{conditions}</p>
         </div>
