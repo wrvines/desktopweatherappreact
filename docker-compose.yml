@@ -11,21 +11,14 @@ services:
         VITE_GEOCODE_API_KEY: ${VITE_GEOCODE_API_KEY}
     container_name: weather-app
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - certbot-conf:/etc/letsencrypt
-      - certbot-www:/var/www/certbot
+    expose:
+      - "80"
+    networks:
+      - proxy
 
-  certbot:
-    image: certbot/certbot
-    container_name: weather-app-certbot
-    profiles: ["certs"]
-    volumes:
-      - certbot-conf:/etc/letsencrypt
-      - certbot-www:/var/www/certbot
-
-volumes:
-  certbot-conf:
-  certbot-www:
+# Shared network with Nginx Proxy Manager. Create it once with:
+#   docker network create proxy
+# and attach your NPM container to it.
+networks:
+  proxy:
+    external: true
